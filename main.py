@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Path, Query
 from enum import Enum
 
 app = FastAPI()
@@ -120,7 +120,7 @@ async def read_items(q: str | None
                          max_length=10,
                          title="Sample query string",
                          description="This is a sample query string",
-                         alias="item-query", 
+                         alias="item-query",
                      )):
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if q:
@@ -133,3 +133,17 @@ async def hidden_query_route(hidden_query: str | None = Query(None, include_in_s
     if hidden_query:
         return {"hidden_query": hidden_query}
     return {"hidden_query": "Not found"}
+
+
+@app.get("/items_validation/{item_id}")
+async def read_item_validation(
+        *,
+        item_id: int = Path(...,
+                            title="The ID of the item to get", ge=10, le=100),
+        q: str = "hello",
+        size: float = Query(..., gt=0, lt=7.75)
+):
+    results = {"item_id": item_id, "size": size}
+    if q:
+        results.update({"q": q})
+    return results
