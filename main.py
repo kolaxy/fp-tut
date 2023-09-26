@@ -1,4 +1,6 @@
+from datetime import datetime, time, timedelta
 import re
+from uuid import UUID
 from pydantic import BaseModel, Field, HttpUrl
 from fastapi import Body, FastAPI, Path, Query, Cookie, Form, File, Header
 from enum import Enum
@@ -241,57 +243,79 @@ Part 7 -> Body - Multiple Parameters
 #     return blahs
 
 # Part 10: Declare Request Example Data
-class Item(BaseModel):
-    name: str
-    description: str | None
-    price: float
-    tax: float | None
+# class Item(BaseModel):
+#     name: str
+#     description: str | None
+#     price: float
+#     tax: float | None
 
-    # class Config:
-    #     schema_extra = {
-    #         "example": {
-    #             "name": "Foo",
-    #             "description": "A very nice Item",
-    #             "price": 16.25,
-    #             "tax": 1.67,
-    #         }
-    #     }
+#     # class Config:
+#     #     schema_extra = {
+#     #         "example": {
+#     #             "name": "Foo",
+#     #             "description": "A very nice Item",
+#     #             "price": 16.25,
+#     #             "tax": 1.67,
+#     #         }
+#     #     }
 
+
+# @app.put("/items/{item_id}")
+# async def update_item(
+#     *,
+#     item_id: int,
+#     item: Item =
+#         Body(
+#             openapi_examples={
+#                 "normal": {
+#                     "summary": "A normal example",
+#                     "description": "A **normal** item works correctly.",
+#                     "value": {
+#                         "name": "Foo",
+#                         "description": "A very nice Item",
+#                         "price": 35.4,
+#                         "tax": 3.2,
+#                     },
+#                 },
+#                 "converted": {
+#                     "summary": "An example with converted data",
+#                     "description": "FastAPI can convert price `strings` to actual `numbers` automatically",
+#                     "value": {
+#                         "name": "Bar",
+#                         "price": "35.4",
+#                     },
+#                 },
+#                 "invalid": {
+#                     "summary": "Invalid data is rejected with an error",
+#                     "value": {
+#                         "name": "Baz",
+#                         "price": "thirty five point four",
+#                     },
+#                 },
+#             },
+#         ),
+# ):
+#     results = {"item_id": item_id, "item": item}
+#     return results
+
+# Part 10: Extra Data Types
 
 @app.put("/items/{item_id}")
-async def update_item(
-    *,
-    item_id: int,
-    item: Item =
-        Body(
-            openapi_examples={
-                "normal": {
-                    "summary": "A normal example",
-                    "description": "A **normal** item works correctly.",
-                    "value": {
-                        "name": "Foo",
-                        "description": "A very nice Item",
-                        "price": 35.4,
-                        "tax": 3.2,
-                    },
-                },
-                "converted": {
-                    "summary": "An example with converted data",
-                    "description": "FastAPI can convert price `strings` to actual `numbers` automatically",
-                    "value": {
-                        "name": "Bar",
-                        "price": "35.4",
-                    },
-                },
-                "invalid": {
-                    "summary": "Invalid data is rejected with an error",
-                    "value": {
-                        "name": "Baz",
-                        "price": "thirty five point four",
-                    },
-                },
-            },
-        ),
+async def read_items(
+    item_id: UUID,
+    start_datetime: datetime | None = None,
+    end_datetime: datetime | None = None,
+    repeat_at: time | None = None,
+    process_after: timedelta | None = None,
 ):
-    results = {"item_id": item_id, "item": item}
-    return results
+    start_process = start_datetime + process_after
+    duration = end_datetime - start_process
+    return {
+        "item_id": item_id,
+        "start_datetime": start_datetime,
+        "end_datetime": end_datetime,
+        "repeat_at": repeat_at,
+        "process_after": process_after,
+        "start_process": start_process,
+        "duration": duration, 
+    }
