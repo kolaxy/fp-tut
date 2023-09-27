@@ -320,8 +320,23 @@ Part 7 -> Body - Multiple Parameters
 #         "duration": duration,
 #     }
 
-## Part 11: Cookie Parameters
+# Part 11: Cookie Parameters
+
+# @app.get("/items/")
+# async def read_items(ads_id: str | None = Cookie(default=None)):
+#     return {"ads_id": ads_id}
+
+# Part 12: Header Parameters
 
 @app.get("/items/")
-async def read_items(ads_id: str | None = Cookie(default=None)):
-    return {"ads_id": ads_id}
+async def read_items(user_agent: str | None = Header(default=None)):
+    return {"User-Agent": user_agent}
+
+
+@app.get("/items/")
+async def read_items(strange_header: str | None = Header(convert_underscores=False, default=None)):
+    return {"strange_header": strange_header}
+
+@app.get("/items/")
+async def read_items(x_token: list[str] | None = Header(default=None)):
+    return {"X-Token values": x_token}
