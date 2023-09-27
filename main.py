@@ -300,22 +300,28 @@ Part 7 -> Body - Multiple Parameters
 
 # Part 10: Extra Data Types
 
-@app.put("/items/{item_id}")
-async def read_items(
-    item_id: UUID,
-    start_datetime: datetime | None = None,
-    end_datetime: datetime | None = None,
-    repeat_at: time | None = None,
-    process_after: timedelta | None = None,
-):
-    start_process = start_datetime + process_after
-    duration = end_datetime - start_process
-    return {
-        "item_id": item_id,
-        "start_datetime": start_datetime,
-        "end_datetime": end_datetime,
-        "repeat_at": repeat_at,
-        "process_after": process_after,
-        "start_process": start_process,
-        "duration": duration, 
-    }
+# @app.put("/items/{item_id}")
+# async def read_items(
+#     item_id: UUID,
+#     start_datetime: datetime | None = None,
+#     end_datetime: datetime | None = None,
+#     repeat_at: time | None = None,
+#     process_after: timedelta | None = None,
+# ):
+#     start_process = start_datetime + process_after
+#     duration = end_datetime - start_process
+#     return {
+#         "item_id": item_id,
+#         "start_datetime": start_datetime,
+#         "end_datetime": end_datetime,
+#         "repeat_at": repeat_at,
+#         "process_after": process_after,
+#         "start_process": start_process,
+#         "duration": duration,
+#     }
+
+## Part 11: Cookie Parameters
+
+@app.get("/items/")
+async def read_items(ads_id: str | None = Cookie(default=None)):
+    return {"ads_id": ads_id}
