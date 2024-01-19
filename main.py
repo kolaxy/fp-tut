@@ -12,8 +12,6 @@ app.include_router(items_router)
 app.include_router(user_router)
 
 
-
-
 @app.get("/")
 def hello_index():
     return {
@@ -24,10 +22,7 @@ def hello_index():
 @app.get("/hello/")
 def hello(name: str = "World"):
     name = name.strip().title()
-    return {
-        "message": f"Hello, {name}!"
-    }
-
+    return {"message": f"Hello, {name}!"}
 
 
 @app.get("/calc/add/")
